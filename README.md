@@ -1,0 +1,208 @@
+import React, {useState} from 'react';
+import { Text, View, StyleSheet, FlatList, TextInput, TouchableOpacity } from 'react-native';
+
+export default function App() {
+
+  const cadastro = [
+    {codigo: '1000', descricao: 'Teclado Gamer RGB', preco: '758.99', quantidade: `237`},
+    {codigo: '1001', descricao: 'Memória RAM 16gb', preco: '459.99', quantidade: `436`},
+    {codigo: '1002', descricao: 'Ryzen 9 5900x', preco: '3249.99', quantidade: `244`},
+  ];
+
+  const [codigoNum, setCodigoNum] = useState('');
+  const [descricaoNum, setDescricaoNum] = useState('');
+  const [precoNum, setPrecoNum] = useState('');
+  const [quantidadeNum, setQuantidadeNum] = useState('');
+  const [lista, setLista] = useState(cadastro);
+  
+  const indiceCod = lista.findIndex(
+    (item) => item.codigo == codigoNum
+    
+  );
+  
+  const addCadastro = () => {
+
+    if(codigoNum == '' || indiceCod != -1 || descricaoNum == '' || precoNum == '' || quantidadeNum == ''){
+      alert('Código já existente, digite outro!')
+      return;
+    }
+
+    setLista( (lista) => [
+      ...lista, {codigo: codigoNum, descricao: descricaoNum, preco: precoNum, quantidade: quantidadeNum}
+    ]);
+
+    limparInputs();
+  };
+
+  
+
+  const editaCadastro = () => {
+    if(codigoNum == '' || descricaoNum == '' || precoNum == '' || quantidadeNum == '')
+      
+    {
+      return;
+    }
+
+    setLista(
+      lista.map((cadastro) =>
+        cadastro.codigo == codigoNum
+          ? {...cadastro, descricao: descricaoNum, preco: precoNum, quantidade: quantidadeNum}
+          : {...cadastro}
+      ));
+
+      limparInputs();
+  };
+
+  
+  const indice = lista.findIndex(
+    (item) => item.codigo == codigoNum
+  );
+
+  const apagaCadastro = () => {
+    if(codigoNum == '' || indiceCod ==-1){
+      return;
+    }
+    
+    setLista([
+      ...lista.slice(0, indice),
+      ...lista.slice(indice + 1, lista.length)
+    ])
+
+    limparInputs();
+  }
+
+  function limparInputs(){
+    setCodigoNum('');
+    setDescricaoNum('');
+    setPrecoNum('');
+    setQuantidadeNum('');
+  }
+
+  return (
+    <View style={styles.container}>
+
+    <View>
+    
+      <TextInput
+        style={styles.entrada}
+        placeholder='Código' 
+        value={codigoNum}
+        onChangeText={(valor) => {setCodigoNum(valor)}}/>
+
+      <TextInput
+        style={styles.entrada}
+        placeholder='Descrição' 
+        value={descricaoNum}
+        onChangeText={(valor) => {setDescricaoNum(valor)}}/>
+      
+      <TextInput
+        style={styles.entrada}
+        placeholder='Preço' 
+        value={precoNum}
+        keyboardType='numeric'
+        
+        onChangeText={(valor) => {setPrecoNum(valor)}}/>
+      
+      <TextInput
+        style={styles.entrada}
+        placeholder='Quantidade' 
+        value={quantidadeNum}
+        keyboardType='numeric'
+        onChangeText={(valor) => {setQuantidadeNum(valor)}}/>
+
+    </View>
+
+    <View style={styles.buttons}>
+        <TouchableOpacity
+        style={styles.botao}
+        onPress={addCadastro}>
+        <Text style={styles.textoBotao}>Adicionar</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        style={styles.botao}
+        onPress={editaCadastro}>
+        <Text style={styles.textoBotao}>Editar</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        style={styles.botao}
+        onPress={apagaCadastro}>
+        <Text style={styles.textoBotao}>Apagar</Text>
+      </TouchableOpacity>
+    </View>
+
+    <View>
+    {/*LISTA*/}
+      <FlatList 
+        data={lista}
+        renderItem={({item}) => (
+          <Text style={styles.item}> {'[' + item.codigo + ']' + item.descricao + '\nPreço: R$ ' + item.preco + '\nQuantidade: ' + item.quantidade } </Text>
+        )} />
+    </View>
+     
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,    
+    backgroundColor: '#FFF',
+    padding: 8,
+    marginTop: 20,
+    
+    
+  },
+  entrada: {
+    textAlign: 'center',
+    borderWidth: 2,
+    marginBottom: 5,
+    borderRadius: 5,
+    fontSize: 20,
+    color: `red`,
+    
+    
+  },
+  botao: {
+     backgroundColor: `orange`,
+     flexDirection: `row`,
+     width: 85,
+     height: 35,
+     borderRadius: 30,
+     margin: 2,
+     justifyContent: `center`,
+     
+     
+    
+    
+    
+  },
+  textoBotao: {
+    color: 'white',
+    textTransform: 'uppercase',
+    fontWeight: 'bolder',
+    textAlign: 'center',
+    marginTop: 6
+    
+    
+    
+    
+    
+  },
+  item: {
+    marginBottom: 1,
+    fontSize: 16,
+    color: 'grey',
+    borderBottomWidth: 2,
+    
+    
+    
+  },
+
+  buttons: {
+    flexDirection: 'row',
+    justifyContent: `center`
+  }
+  
+});
